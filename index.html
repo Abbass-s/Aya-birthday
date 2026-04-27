@@ -322,45 +322,26 @@ body{
 }
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
 #hearts-game{
-  position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden;
+  position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;
 }
 .fall-heart{
-  position:absolute;top:-60px;font-size:1.6rem;
-  cursor:pointer;pointer-events:all;user-select:none;
+  position:absolute;top:-60px;font-size:.9rem;
+  pointer-events:none;user-select:none;
   animation:heartDrop linear forwards;
   transition:transform .1s;
 }
 .fall-heart:hover{transform:scale(1.3);}
 .fall-heart.caught{animation:heartCatch .4s ease forwards!important;pointer-events:none;}
 @keyframes heartDrop{
-  0%{opacity:.9;transform:rotate(-10deg);}
-  100%{opacity:.2;transform:translateY(110vh) rotate(10deg);}
+  0%{opacity:.35;transform:rotate(-10deg);}
+  100%{opacity:0;transform:translateY(110vh) rotate(10deg);}
 }
 @keyframes heartCatch{
   0%{transform:scale(1);}
   50%{transform:scale(1.8);}
   100%{transform:scale(0);opacity:0;}
 }
-#catch-counter{
-  position:absolute;top:1.2rem;right:1.4rem;
-  font-family:'Cormorant Garamond',serif;font-style:italic;
-  font-size:1.1rem;color:var(--gold);
-  background:rgba(0,0,0,.3);backdrop-filter:blur(8px);
-  border:1px solid rgba(240,188,60,.25);border-radius:50px;
-  padding:.4rem 1.1rem;z-index:3;
-  opacity:0;transition:opacity .4s;
-}
-#catch-counter.show{opacity:1;}
-#catch-msg{
-  position:absolute;bottom:8rem;left:50%;transform:translateX(-50%);
-  font-family:'Cormorant Garamond',serif;font-style:italic;
-  font-size:1.2rem;color:var(--champagne);text-align:center;
-  background:rgba(0,0,0,.45);backdrop-filter:blur(10px);
-  border:1px solid rgba(217,79,114,.3);border-radius:16px;
-  padding:.8rem 1.6rem;white-space:nowrap;
-  opacity:0;transition:opacity .5s;z-index:3;pointer-events:none;
-}
-#catch-msg.show{opacity:1;}
+/* hearts are now ambient background only */
 
 /* ══════════════════════════════════════
    MUSIC PLAYER
@@ -799,8 +780,142 @@ body{
 .cards-win.show{display:block;}
 
 /* ══════════════════════════════════════
-   RESPONSIVE
+   COUNTDOWN MUSIC PLAYER (Taylor Swift)
 ══════════════════════════════════════ */
+#cd-player{
+  position:fixed;bottom:1.5rem;left:1.5rem;z-index:800;
+  display:none;opacity:0;transform:translateY(20px);
+  background:rgba(14,8,16,.92);
+  border:1px solid rgba(240,188,60,.32);
+  border-radius:22px;padding:1rem 1.3rem;
+  backdrop-filter:blur(24px);
+  box-shadow:0 8px 36px rgba(0,0,0,.55),0 0 45px rgba(240,188,60,.1);
+  min-width:200px;transition:opacity .6s ease,transform .6s ease;
+}
+#cd-player.show{opacity:1;transform:translateY(0);}
+.cdp-top{display:flex;align-items:center;gap:.7rem;margin-bottom:.7rem;}
+.cdp-note{font-size:1.2rem;animation:noteBob 1.6s ease-in-out infinite;}
+.cdp-song{font-size:.88rem;color:var(--champagne);font-weight:500;}
+.cdp-art{font-size:.7rem;color:var(--dim);margin-top:.1rem;}
+.cdp-row{display:flex;align-items:center;gap:.7rem;}
+#cdplaybtn{
+  width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),#d49a00);
+  color:#fff;font-size:.9rem;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 14px rgba(240,188,60,.4);transition:transform .2s;
+}
+#cdplaybtn:hover{transform:scale(1.1);}
+.cdp-bar{flex:1;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
+.cdp-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--champagne));border-radius:2px;}
+#yt-cd-wrap{position:fixed;bottom:-230px;left:-340px;width:320px;height:180px;overflow:hidden;opacity:.01;pointer-events:none;z-index:1;}
+
+/* ══════════════════════════════════════
+   PIANO GAME
+══════════════════════════════════════ */
+#piano-wrap{
+  width:100%;max-width:700px;margin:2rem auto 0;
+  position:relative;z-index:3;
+}
+.piano-header{text-align:center;margin-bottom:1.2rem;}
+.piano-header h3{
+  font-family:'Pacifico',cursive;font-size:1.5rem;
+  background:linear-gradient(130deg,var(--gold),var(--rose));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  padding-bottom:.05em;
+}
+.piano-header p{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:.95rem;color:var(--dim);margin-top:.3rem;
+}
+/* song display */
+.piano-song-name{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1rem;color:var(--gold);text-align:center;
+  margin-bottom:.8rem;opacity:.8;
+}
+/* note sequence display */
+.piano-sequence{
+  display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;
+  margin-bottom:1rem;min-height:36px;
+}
+.seq-note{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;font-weight:700;color:#fff;
+  opacity:.35;transition:opacity .2s,transform .2s,box-shadow .3s;
+  font-family:'DM Sans',sans-serif;
+}
+.seq-note.active{opacity:1;transform:scale(1.15);box-shadow:0 0 12px rgba(255,255,255,.5);}
+.seq-note.done{opacity:.7;}
+.seq-note.wrong{animation:noteWrong .4s ease;}
+@keyframes noteWrong{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+/* piano keys */
+.piano-keys{
+  display:flex;justify-content:center;gap:4px;
+  padding:0 1rem;margin-bottom:1rem;
+  position:relative;
+}
+.pkey{
+  flex:1;max-width:60px;height:120px;
+  border-radius:0 0 10px 10px;
+  border:none;cursor:pointer;
+  position:relative;
+  transition:transform .1s,box-shadow .1s,filter .1s;
+  box-shadow:0 4px 0 rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3);
+  font-family:'DM Sans',sans-serif;font-size:.7rem;font-weight:700;
+  display:flex;align-items:flex-end;justify-content:center;padding-bottom:.5rem;
+  color:rgba(255,255,255,.6);
+}
+.pkey:active,.pkey.pressed{
+  transform:translateY(3px);
+  box-shadow:0 1px 0 rgba(0,0,0,.4),0 2px 8px rgba(0,0,0,.3);
+  filter:brightness(1.3);
+}
+.pkey.lit{
+  filter:brightness(1.5);
+  transform:translateY(2px);
+  box-shadow:0 2px 0 rgba(0,0,0,.4),0 0 20px currentColor;
+}
+/* piano status */
+.piano-status{
+  text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1rem;color:var(--dim);min-height:1.4rem;margin-bottom:.8rem;
+  transition:color .3s;
+}
+.piano-status.correct{color:#4ade80;}
+.piano-status.wrong{color:#f87171;}
+/* controls */
+.piano-controls{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;}
+.piano-btn{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.6);border-radius:100px;
+  padding:.55rem 1.4rem;font-family:'DM Sans',sans-serif;
+  font-size:.85rem;cursor:pointer;transition:all .2s;
+}
+.piano-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
+.piano-btn.primary{
+  background:linear-gradient(130deg,var(--rose),var(--gold));
+  border-color:transparent;color:#fff;
+  box-shadow:0 4px 18px rgba(217,79,114,.3);
+}
+/* prize */
+.piano-prize{
+  display:none;
+  background:linear-gradient(150deg,rgba(28,11,24,.95),rgba(42,13,32,.95));
+  border:1px solid rgba(240,188,60,.35);border-radius:20px;
+  padding:1.5rem;text-align:center;margin-top:1rem;
+  animation:fadeUp .6s cubic-bezier(.16,1,.3,1);
+}
+.piano-prize.show{display:block;}
+.piano-prize .pp-emoji{font-size:2.5rem;display:block;margin-bottom:.6rem;}
+.piano-prize .pp-title{
+  font-family:'Pacifico',cursive;font-size:1.3rem;color:var(--gold);
+  margin-bottom:.5rem;padding-bottom:.05em;
+}
+.piano-prize .pp-msg{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1rem;color:var(--champagne);line-height:1.7;
+}
 @media(max-width:600px){
   #letter{padding:2.5rem 1.8rem;}
   .fgrid{grid-template-columns:1fr;}
@@ -821,6 +936,19 @@ body{
 <div id="stars"></div>
 <div id="yt-wrap"><div id="yt-frame"></div></div>
 <div id="yt-bday-wrap"><div id="yt-bday-frame"></div></div>
+<div id="yt-cd-wrap"><div id="yt-cd-frame"></div></div>
+
+<!-- COUNTDOWN MUSIC PLAYER -->
+<div id="cd-player">
+  <div class="cdp-top">
+    <span class="cdp-note">🎵</span>
+    <div><div class="cdp-song">You Belong With Me</div><div class="cdp-art">Taylor Swift</div></div>
+  </div>
+  <div class="cdp-row">
+    <button id="cdplaybtn" onclick="toggleCdMusic()">▶</button>
+    <div class="cdp-bar"><div class="cdp-fill" id="cdpfill"></div></div>
+  </div>
+</div>
 
 <!-- BIRTHDAY SPLASH — shown on April 28 or when countdown hits zero -->
 <div id="bday-splash">
@@ -883,11 +1011,8 @@ body{
 
 <!-- ═══════ PHASE 1 ═══════ -->
 <div id="p1">
-  <!-- Hearts game layer -->
-  <div id="hearts-game">
-    <div id="catch-counter">❤️ <span id="cnt">0</span> caught</div>
-    <div id="catch-msg"></div>
-  </div>
+  <!-- Hearts ambient background -->
+  <div id="hearts-game"></div>
 
   <p class="p1-eyebrow">a surprise is waiting for</p>
   <div style="line-height:1;margin-bottom:.5rem;">
@@ -907,6 +1032,27 @@ body{
   </div>
 
   <button id="cbtn" onclick="celebrate()">🎉 Open Your Surprise, Aya!</button>
+
+  <!-- 🎹 PIANO GAME -->
+  <div id="piano-wrap">
+    <div class="piano-header">
+      <h3>🎹 Love Piano</h3>
+      <p>Watch the keys light up — then repeat the melody!</p>
+    </div>
+    <p class="piano-song-name" id="piano-song-name"></p>
+    <div class="piano-sequence" id="piano-seq"></div>
+    <div class="piano-keys" id="piano-keys"></div>
+    <p class="piano-status" id="piano-status">Press "Watch" to see the melody 🎵</p>
+    <div class="piano-controls">
+      <button class="piano-btn primary" id="piano-watch-btn" onclick="watchMelody()">👁 Watch</button>
+      <button class="piano-btn" onclick="resetPiano()">🔄 New Song</button>
+    </div>
+    <div class="piano-prize" id="piano-prize">
+      <span class="pp-emoji" id="pp-emoji">🎉</span>
+      <p class="pp-title" id="pp-title">You did it!</p>
+      <p class="pp-msg" id="pp-msg"></p>
+    </div>
+  </div>
 
 </div>
 
@@ -999,7 +1145,7 @@ body{
     <canvas id="uCanvas"></canvas>
     <div class="u-body">
       <h2 class="sec-title sr" style="color:var(--gold)">🌌 Our Universe</h2>
-      <p class="sec-sub sr">Every star up there has a name — click them to find out 💫</p>
+      <p class="sec-sub sr">Click any star to discover its story — especially yours ✨</p>
     </div>
   </div>
 
@@ -1200,10 +1346,10 @@ body{
    - Default: "Perfect" – Ed Sheeran
    - Change: swap YT_ID with any YouTube video ID
 ════════════════════════════════════════ */
-const BIN_KEY = 'YOUR_MASTER_KEY'; // ← jsonbin.io Master Key
-const BIN_ID  = 'YOUR_BIN_ID';    // ← jsonbin.io Bin ID
+const BIN_KEY = '$2a$10$pLqe9cpMzErvDn.Qir05SuVu7aYA6ipohgi/rv8uWTmIOHL4tyfDu';
+const BIN_ID  = '69ee4e6a856a682189756956';
 const YT_ID   = '2Vv-BfVoq4g';    // ← YouTube video ID
-const DB_ON   = !BIN_KEY.includes('YOUR');
+const DB_ON   = true;
 
 /* ── STARS ─────────────────────────── */
 const se=document.getElementById('stars');
@@ -1255,59 +1401,23 @@ tick();setInterval(tick,1000);
 /* ── DEV UNLOCK ────────────────────── */
 /* ── DEV UNLOCK removed for production ── */
 
-/* ── HEARTS GAME ───────────────────── */
-let caught=0;
+/* ── HEARTS GAME (ambient bg only) ── */
 const heartEmojis=['❤️','💕','💖','💗','💓','💝','🩷'];
-const catchMessages=[
-  [5,  '5 hearts! She\'s catching feelings 😍'],
-  [15, 'She\'s unstoppable! 15 hearts! 💖'],
-  [30, '30 hearts! Almost as many as I love you 😘'],
-  [50, '50!! You caught them all like you caught my heart 💕'],
-];
-let shownMsgs=new Set();
 
 function spawnHeart(){
   const el=document.createElement('div');
   el.className='fall-heart';
   el.textContent=heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
-  el.style.left=Math.random()*90+'vw';
-  const dur=4+Math.random()*5;
+  el.style.left=Math.random()*95+'vw';
+  const dur=7+Math.random()*7;
   el.style.animationDuration=dur+'s';
-  el.style.animationDelay=Math.random()*1+'s';
-  el.style.fontSize=(1.2+Math.random()*.8)+'rem';
-  el.addEventListener('click',()=>catchHeart(el));
-  el.addEventListener('touchstart',e=>{e.preventDefault();catchHeart(el);},{passive:false});
+  el.style.fontSize=(.5+Math.random()*.6)+'rem';
+  el.style.opacity=(.15+Math.random()*.2).toString();
   document.getElementById('hearts-game').appendChild(el);
-  setTimeout(()=>el.remove(),(dur+2)*1000);
+  setTimeout(()=>el.remove(),(dur+1)*1000);
 }
-
-function catchHeart(el){
-  if(el.classList.contains('caught'))return;
-  el.classList.add('caught');
-  caught++;
-  const ctr=document.getElementById('catch-counter');
-  document.getElementById('cnt').textContent=caught;
-  ctr.classList.add('show');
-  // boom mini
-  const r=el.getBoundingClientRect();
-  boom(r.left+r.width/2,r.top,20);
-  // messages
-  for(const [n,msg] of catchMessages){
-    if(caught===n&&!shownMsgs.has(n)){
-      shownMsgs.add(n);
-      showCatchMsg(msg);
-    }
-  }
-}
-
-function showCatchMsg(msg){
-  const m=document.getElementById('catch-msg');
-  m.textContent=msg;m.classList.add('show');
-  setTimeout(()=>m.classList.remove('show'),3000);
-}
-
-setInterval(spawnHeart,1000);
-for(let i=0;i<5;i++) setTimeout(spawnHeart,i*300);
+setInterval(spawnHeart,2500);
+for(let i=0;i<4;i++) setTimeout(spawnHeart,i*800);
 
 /* ── CELEBRATE ─────────────────────── */
 function celebrate(){
@@ -1363,15 +1473,27 @@ function boom(cx,cy,n){
 
 /* ── YOUTUBE ───────────────────────── */
 const IS_BDAY = new Date().getMonth()===3 && new Date().getDate()===28;
-const HB_YT_ID = 'AkRVEAd4s9Q'; // Happy Birthday instrumental
+const HB_YT_ID = 'AkRVEAd4s9Q';
 
 let yt=null, ytBday=null, playing=false, ytReady=false, ytBdayReady=false;
+let mobileUnmuted=false;
+
+// On first touch/click → unmute all active players
+function unmutePlayers(){
+  if(mobileUnmuted)return;
+  mobileUnmuted=true;
+  if(yt&&ytReady){try{yt.unMute();yt.setVolume(100);}catch(e){}}
+  if(ytBday&&ytBdayReady){try{ytBday.unMute();ytBday.setVolume(100);}catch(e){}}
+  if(ytCd&&ytCdReady){try{ytCd.unMute();ytCd.setVolume(100);}catch(e){}}
+}
+document.addEventListener('touchstart',unmutePlayers,{once:true});
+document.addEventListener('click',unmutePlayers,{once:true});
 
 window.onYouTubeIframeAPIReady=function(){
-  // Main player — Perfect by Ed Sheeran
+  // Perfect — Ed Sheeran (muted for mobile autoplay)
   yt=new YT.Player('yt-frame',{
     height:'180',width:'320',videoId:YT_ID,
-    playerVars:{autoplay:1,controls:0,rel:0,modestbranding:1,playsinline:1,mute:0},
+    playerVars:{autoplay:1,controls:0,rel:0,modestbranding:1,playsinline:1,mute:1},
     events:{
       onReady:e=>{ytReady=true;e.target.playVideo();},
       onStateChange:e=>{
@@ -1382,16 +1504,18 @@ window.onYouTubeIframeAPIReady=function(){
       }
     }
   });
-  // Birthday player — only init on April 28
+  // Happy Birthday — only on April 28 (muted for mobile)
   if(IS_BDAY){
     ytBday=new YT.Player('yt-bday-frame',{
       height:'180',width:'320',videoId:HB_YT_ID,
-      playerVars:{autoplay:1,controls:0,rel:0,modestbranding:1,playsinline:1},
+      playerVars:{autoplay:1,controls:0,rel:0,modestbranding:1,playsinline:1,mute:1},
       events:{
-        onReady:e=>{ytBdayReady=true;e.target.playVideo();},
+        onReady:e=>{ytBdayReady=true;e.target.playVideo();}
       }
     });
   }
+  // Taylor Swift — countdown page
+  initCdPlayer();
 };
 
 let barFrame;
@@ -1430,10 +1554,12 @@ function showSplash(){
   const splash=document.getElementById('bday-splash');
   splash.classList.add('active');
   initSplashCanvas();
-  // confetti bursts
-  setTimeout(()=>boom(window.innerWidth/2,window.innerHeight/3,180),800);
-  setTimeout(()=>boom(window.innerWidth*.2,window.innerHeight*.5,100),1800);
-  setTimeout(()=>boom(window.innerWidth*.8,window.innerHeight*.5,100),2600);
+  // type title first, then confetti after
+  typeSplashTitle(()=>{
+    setTimeout(()=>boom(window.innerWidth/2,window.innerHeight/3,180),200);
+    setTimeout(()=>boom(window.innerWidth*.2,window.innerHeight*.5,100),1000);
+    setTimeout(()=>boom(window.innerWidth*.8,window.innerHeight*.5,100),1800);
+  });
 }
 
 // auto-trigger when countdown hits zero
@@ -1540,7 +1666,13 @@ async function submitSplashWish(){
 
 function enterSite(){
   const splash=document.getElementById('bday-splash');
+  // stop birthday song
   if(ytBday&&ytBdayReady)ytBday.stopVideo();
+  // stop Taylor Swift countdown song
+  if(ytCd&&ytCdReady)ytCd.stopVideo();
+  const cdp=document.getElementById('cd-player');
+  if(cdp){cdp.classList.remove('show');setTimeout(()=>cdp.style.display='none',600);}
+  // start Perfect
   if(yt&&ytReady)yt.playVideo();
   showPlayer();
   splash.classList.add('hide');
@@ -1689,7 +1821,7 @@ setTimeout(initTimeline,2000);
 
 /* ── OUR UNIVERSE ──────────────────── */
 const STARS=[
-  {name:'Tweeta ★',emoji:'💫',color:'#f5b8cc',r:6,msg:'Named after the most important person in my universe. The star that makes every other one look dim. That\'s you, Tweeta. Always you.'},
+  {name:'Tweeta ★',emoji:'💫',color:'#f5b8cc',r:6,isTweeta:true,msg:''},
   {name:'7ayouta ★',emoji:'🌟',color:'#f0bc3c',r:5,msg:'The star that orbits yours. Always close, always watching over you. No matter how far — always there.'},
   {name:'First Message',emoji:'💬',color:'#a78bfa',r:4,msg:'Dec 27, 2025 — the night a few words changed everything. This star was born the moment you typed the first message.'},
   {name:'First Seen',emoji:'👀',color:'#6ee7b7',r:3.5,msg:'Jan 5, 2026 — the day I saw you for real and understood why I couldn\'t stop thinking about you.'},
@@ -1697,6 +1829,39 @@ const STARS=[
   {name:'We Became Us',emoji:'❤️',color:'#f87171',r:5,msg:'Jan 11, 2026 — the most important date. The day you said yes and we became something real. This star shines the brightest.'},
   {name:'First Date',emoji:'🌹',color:'#fda4af',r:4,msg:'Mar 24, 2026 — our first date. I wanted everything to be perfect for you. Just being with you made it perfect anyway.'},
   {name:'Your Birthday',emoji:'🎂',color:'#fde68a',r:5.5,msg:'April 28 — the day the universe decided to gift the world with you. The most important birthday in my calendar. Happy Birthday, Aya. 💕'},
+];
+
+// AYA letter dot positions (relative, will be scaled to canvas)
+const AYA_DOTS={
+  A:[
+    [0,1],[.5,0],[1,1],   // A outline
+    [.25,.5],[.75,.5],    // A crossbar
+  ],
+  Y:[
+    [0,0],[.5,.5],[1,0],  // Y top
+    [.5,.5],[.5,1],       // Y stem
+  ],
+  A2:[
+    [0,1],[.5,0],[1,1],
+    [.25,.5],[.75,.5],
+  ]
+};
+
+// Full AYA constellation points (normalised 0–1 in x, 0–1 in y across whole canvas)
+const AYA_CONSTELLATION=[
+  // Letter A (left)
+  {x:.12,y:.75},{x:.20,y:.30},{x:.28,y:.75},{x:.16,y:.57},{x:.24,y:.57},
+  // Letter Y (middle)
+  {x:.38,y:.30},{x:.46,y:.55},{x:.54,y:.30},{x:.46,y:.55},{x:.46,y:.78},
+  // Letter A (right)
+  {x:.60,y:.75},{x:.68,y:.30},{x:.76,y:.75},{x:.64,y:.57},{x:.72,y:.57},
+];
+
+// Constellation line connections [from_idx, to_idx]
+const AYA_LINES=[
+  [0,1],[1,2],[3,4],           // A left
+  [5,6],[7,6],[6,8],           // Y
+  [9,10],[10,11],[12,13],      // A right  — fixed: was [13,14]
 ];
 
 function initUniverse(){
@@ -1707,66 +1872,187 @@ function initUniverse(){
   function rsz(){cv.width=sec.offsetWidth;cv.height=sec.offsetHeight;}
   rsz();window.addEventListener('resize',rsz);
 
-  // place stars
+  // place named stars
   const placed=[];
   const margin=80;
-  STARS.forEach((s,i)=>{
+  STARS.forEach((s)=>{
     let x,y,tries=0;
     do{
       x=margin+Math.random()*(cv.width-margin*2);
       y=margin+Math.random()*(cv.height-margin*2);
       tries++;
     }while(placed.some(p=>Math.hypot(p.x-x,p.y-y)<90)&&tries<100);
-    placed.push({...s,x,y,pulse:Math.random()*Math.PI*2,ox:x,oy:y});
+    placed.push({...s,x,y,pulse:Math.random()*Math.PI*2,ox:x,oy:y,tx:x,ty:y});
   });
 
   // bg stars
-  const bg=Array.from({length:200},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:.3+Math.random()*1.5,a:Math.random(),da:.003+Math.random()*.008}));
+  const bg=Array.from({length:200},()=>({
+    x:Math.random()*cv.width,y:Math.random()*cv.height,
+    r:.3+Math.random()*1.5,a:Math.random(),da:.003+Math.random()*.008
+  }));
+
+  // constellation state
+  let showingAya=false;
+  let ayaProgress=0; // 0→1 animation
+  let ayaLabel=0;    // label fade 0→1
+  let ayaDots=[];    // computed dot positions
+
+  function computeAyaDots(){
+    return AYA_CONSTELLATION.map(p=>({
+      x:p.x*cv.width,
+      y:.2*cv.height + p.y*cv.height*.6
+    }));
+  }
 
   // click handler
   cv.addEventListener('click',e=>{
     const rect=cv.getBoundingClientRect();
     const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+
+    if(showingAya){
+      // click anywhere to dismiss
+      showingAya=false;
+      ayaProgress=0;ayaLabel=0;
+      // restore star positions
+      placed.forEach(s=>{s.tx=s.ox;s.ty=s.oy;});
+      return;
+    }
+
     placed.forEach(s=>{
-      if(Math.hypot(s.x-mx,s.y-my)<s.r*4+12){
-        document.getElementById('sp-emoji').textContent=s.emoji;
-        document.getElementById('sp-title').textContent=s.name;
-        document.getElementById('sp-msg').textContent=s.msg;
-        document.getElementById('star-popup').classList.add('open');
-        document.getElementById('star-overlay').classList.add('open');
+      if(Math.hypot(s.x-mx,s.y-my)<s.r*4+14){
+        if(s.isTweeta){
+          // ✨ Trigger AYA constellation
+          showingAya=true;
+          ayaProgress=0;ayaLabel=0;
+          ayaDots=computeAyaDots();
+          // animate named stars toward AYA dot positions
+          placed.forEach((star,i)=>{
+            const dot=ayaDots[i%ayaDots.length];
+            star.tx=dot.x;star.ty=dot.y;
+          });
+        } else {
+          document.getElementById('sp-emoji').textContent=s.emoji;
+          document.getElementById('sp-title').textContent=s.name;
+          document.getElementById('sp-msg').textContent=s.msg;
+          document.getElementById('star-popup').classList.add('open');
+          document.getElementById('star-overlay').classList.add('open');
+        }
       }
     });
   });
 
-  let t=0;
+  // draw loop
   (function draw(){
     ctx.clearRect(0,0,cv.width,cv.height);
+
     // bg stars
-    bg.forEach(s=>{s.a+=s.da;if(s.a>1||s.a<0)s.da*=-1;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${s.a})`;ctx.fill();});
-    // named stars
-    placed.forEach(s=>{
-      s.pulse+=.02;
-      const pr=s.r+Math.sin(s.pulse)*1.5;
-      // glow
-      const g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,pr*5);
-      g.addColorStop(0,s.color+'cc');g.addColorStop(1,'transparent');
-      ctx.beginPath();ctx.arc(s.x,s.y,pr*5,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
-      // star
-      ctx.beginPath();ctx.arc(s.x,s.y,pr,0,Math.PI*2);ctx.fillStyle=s.color;ctx.fill();
-      // label
-      ctx.fillStyle='rgba(255,255,255,.75)';
-      ctx.font=`${window.innerWidth<600?9:11}px 'DM Sans', sans-serif`;
-      ctx.textAlign='center';
-      ctx.fillText(s.name,s.x,s.y+pr+14);
+    bg.forEach(s=>{
+      s.a+=s.da;if(s.a>1||s.a<0)s.da*=-1;
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${s.a})`;ctx.fill();
     });
-    t++;requestAnimationFrame(draw);
+
+    if(showingAya){
+      // animate progress
+      ayaProgress=Math.min(ayaProgress+.018,1);
+      ayaLabel=ayaProgress>.7?(ayaProgress-.7)/.3:0;
+
+      // move named stars toward AYA dots
+      placed.forEach((s,i)=>{
+        const dot=ayaDots[i%ayaDots.length];
+        s.x+=(dot.x-s.x)*.06;
+        s.y+=(dot.y-s.y)*.06;
+      });
+
+      // draw constellation lines
+      const linesDrawn=Math.floor(ayaProgress*AYA_LINES.length);
+      for(let li=0;li<linesDrawn;li++){
+        const [a,b]=AYA_LINES[li];
+        if(!ayaDots[a]||!ayaDots[b])continue;
+        ctx.beginPath();
+        ctx.moveTo(ayaDots[a].x,ayaDots[a].y);
+        ctx.lineTo(ayaDots[b].x,ayaDots[b].y);
+        ctx.strokeStyle=`rgba(245,184,204,${.5*ayaProgress})`;
+        ctx.lineWidth=1.2;ctx.setLineDash([4,4]);
+        ctx.stroke();ctx.setLineDash([]);
+      }
+
+      // draw dots at AYA positions
+      ayaDots.forEach((d,i)=>{
+        const alpha=Math.min(1,ayaProgress*2);
+        ctx.beginPath();ctx.arc(d.x,d.y,3,0,Math.PI*2);
+        ctx.fillStyle=`rgba(245,184,204,${alpha*.8})`;ctx.fill();
+        // glow
+        const g=ctx.createRadialGradient(d.x,d.y,0,d.x,d.y,12);
+        g.addColorStop(0,`rgba(245,184,204,${alpha*.3})`);g.addColorStop(1,'transparent');
+        ctx.beginPath();ctx.arc(d.x,d.y,12,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+      });
+
+      // "AYA" text label
+      if(ayaLabel>0){
+        ctx.save();
+        ctx.globalAlpha=ayaLabel;
+        ctx.font=`bold ${window.innerWidth<600?22:30}px 'Pacifico', cursive`;
+        ctx.fillStyle='rgba(245,184,204,1)';
+        ctx.textAlign='center';
+        ctx.shadowColor='rgba(245,184,204,.8)';
+        ctx.shadowBlur=18;
+        ctx.fillText('Aya',cv.width/2,cv.height*.92);
+        ctx.font=`italic ${window.innerWidth<600?11:14}px 'DM Sans', sans-serif`;
+        ctx.fillStyle='rgba(253,232,184,.8)';
+        ctx.shadowBlur=0;
+        ctx.fillText('You are written in the stars 🌹',cv.width/2,cv.height*.92+26);
+        ctx.restore();
+        // tap to dismiss hint
+        ctx.save();
+        ctx.globalAlpha=ayaLabel*.5;
+        ctx.font=`italic ${window.innerWidth<600?9:11}px 'DM Sans', sans-serif`;
+        ctx.fillStyle='rgba(255,255,255,.6)';
+        ctx.textAlign='center';
+        ctx.fillText('tap anywhere to close',cv.width/2,cv.height*.97);
+        ctx.restore();
+      }
+
+      // draw named stars at their animated positions
+      placed.forEach(s=>{
+        s.pulse+=.02;
+        const pr=s.r+Math.sin(s.pulse)*1.2;
+        const g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,pr*4);
+        g.addColorStop(0,s.color+'cc');g.addColorStop(1,'transparent');
+        ctx.beginPath();ctx.arc(s.x,s.y,pr*4,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+        ctx.beginPath();ctx.arc(s.x,s.y,pr,0,Math.PI*2);ctx.fillStyle=s.color;ctx.fill();
+      });
+
+    } else {
+      // normal mode — restore positions smoothly
+      placed.forEach(s=>{
+        s.x+=(s.ox-s.x)*.06;
+        s.y+=(s.oy-s.y)*.06;
+        s.pulse+=.02;
+        const pr=s.r+Math.sin(s.pulse)*1.5;
+        const g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,pr*5);
+        g.addColorStop(0,s.color+'cc');g.addColorStop(1,'transparent');
+        ctx.beginPath();ctx.arc(s.x,s.y,pr*5,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+        ctx.beginPath();ctx.arc(s.x,s.y,pr,0,Math.PI*2);ctx.fillStyle=s.color;ctx.fill();
+        ctx.fillStyle='rgba(255,255,255,.75)';
+        ctx.font=`${window.innerWidth<600?9:11}px 'DM Sans', sans-serif`;
+        ctx.textAlign='center';
+        ctx.fillText(s.name,s.x,s.y+pr+14);
+      });
+    }
+
+    requestAnimationFrame(draw);
   })();
 }
 function closeStarPopup(){
   document.getElementById('star-popup').classList.remove('open');
   document.getElementById('star-overlay').classList.remove('open');
 }
-// init universe when section visible
+// update popup hint for Tweeta star
+document.addEventListener('DOMContentLoaded',()=>{
+  // instruction hint below universe
+  const ub=document.querySelector('.wish-body');
+});
 const uObs=new IntersectionObserver(entries=>{
   if(entries[0].isIntersecting){initUniverse();uObs.disconnect();}
 },{threshold:.1});
@@ -1962,21 +2248,232 @@ function typeSplashTitle(cb){
 }
 
 /* ── UPDATE showSplash to use typing ── */
-const _origShowSplash=showSplash;
-function showSplash(){
-  const splash=document.getElementById('bday-splash');
-  splash.classList.add('active');
-  initSplashCanvas();
-  // type the title first, then confetti
-  typeSplashTitle(()=>{
-    setTimeout(()=>boom(window.innerWidth/2,window.innerHeight/3,180),200);
-    setTimeout(()=>boom(window.innerWidth*.2,window.innerHeight*.5,100),1000);
-    setTimeout(()=>boom(window.innerWidth*.8,window.innerHeight*.5,100),1800);
-  });
-}
+// (showSplash already defined above with typing — original removed)
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
+
+/* ══════════════════════════════════════
+   TAYLOR SWIFT COUNTDOWN PLAYER
+══════════════════════════════════════ */
+const TS_YT_ID='VuNIsY6JdUw';
+let ytCd=null,ytCdReady=false,cdPlaying=false,cdBarFrame;
+
+function initCdPlayer(){
+  if(ytCd)return;
+  ytCd=new YT.Player('yt-cd-frame',{
+    height:'180',width:'320',videoId:TS_YT_ID,
+    playerVars:{autoplay:1,controls:0,rel:0,modestbranding:1,playsinline:1,mute:1},
+    events:{
+      onReady:e=>{ytCdReady=true;e.target.playVideo();},
+      onStateChange:e=>{
+        cdPlaying=e.data===1;
+        const btn=document.getElementById('cdplaybtn');
+        if(btn)btn.textContent=cdPlaying?'⏸':'▶';
+        if(cdPlaying)animateCdBar();
+      }
+    }
+  });
+  const p=document.getElementById('cd-player');
+  p.style.display='block';
+  setTimeout(()=>p.classList.add('show'),100);
+}
+
+function animateCdBar(){
+  cancelAnimationFrame(cdBarFrame);
+  function step(){
+    if(!ytCd||!cdPlaying)return;
+    const dur=ytCd.getDuration()||1;
+    const cur=ytCd.getCurrentTime()||0;
+    const f=document.getElementById('cdpfill');
+    if(f)f.style.width=(cur/dur*100)+'%';
+    cdBarFrame=requestAnimationFrame(step);
+  }
+  step();
+}
+
+function toggleCdMusic(){
+  if(!ytCdReady)return;
+  cdPlaying?ytCd.pauseVideo():ytCd.playVideo();
+}
+
+// Taylor Swift init merged into main YT ready — no override needed
+// (initCdPlayer called directly from onYouTubeIframeAPIReady below)
+
+// stop countdown music on enter site — handled inside enterSite directly
+
+/* ══════════════════════════════════════
+   PIANO GAME
+══════════════════════════════════════ */
+let audioCtx=null;
+function getAudio(){
+  if(!audioCtx){
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  }
+  // iOS requires resume after user gesture
+  if(audioCtx.state==='suspended')audioCtx.resume();
+  return audioCtx;
+}
+function playPianoNote(freq,dur=0.38){
+  try{
+    const ctx=getAudio();
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.type='sine';
+    osc.frequency.setValueAtTime(freq,ctx.currentTime);
+    gain.gain.setValueAtTime(0.38,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime+dur);
+  }catch(e){}
+}
+
+const KEYS=[
+  {note:'C', freq:261.6,color:'#d94f72'},
+  {note:'D', freq:293.7,color:'#e07048'},
+  {note:'E', freq:329.6,color:'#f0bc3c'},
+  {note:'F', freq:349.2,color:'#4ade80'},
+  {note:'G', freq:392.0,color:'#22d3ee'},
+  {note:'A', freq:440.0,color:'#818cf8'},
+  {note:'B', freq:493.9,color:'#c084fc'},
+  {note:'C²',freq:523.3,color:'#f472b6'},
+];
+
+const SONGS=[
+  {
+    name:'🎂 Happy Birthday',
+    melody:[0,0,1,0,3,2,0,0,1,0,4,3,0,0,7,5,3,2,1],
+    prize:{emoji:'🎂',title:'Perfect! 🎂',msg:'You just played Happy Birthday for yourself! Now April 28 is waiting for you with something special. 🌹'}
+  },
+  {
+    name:'💕 Can\'t Help Falling',
+    melody:[0,2,4,3,2,4,6,5,4,3,2,1,0],
+    prize:{emoji:'💕',title:'Beautiful! 💕',msg:'"Can\'t Help Falling in Love" — just like I couldn\'t help falling for you, Tweeta. 🥺'}
+  },
+  {
+    name:'✨ Twinkle Twinkle',
+    melody:[0,0,4,4,5,5,4,3,3,2,2,1,1,0],
+    prize:{emoji:'✨',title:'You\'re a star! ✨',msg:'Twinkle Twinkle — just like you. The brightest one in my sky, always. 🌟'}
+  },
+  {
+    name:'🌹 Ode to Joy',
+    melody:[2,2,3,4,4,3,2,1,0,0,1,2,2,1,1],
+    prize:{emoji:'🌹',title:'Incredible! 🌹',msg:'Ode to Joy — because that\'s exactly what you are to me. My favourite reason to smile every single day. 💕'}
+  },
+];
+
+let curSong=0,pIdx=0,isWatching=false,pianoLocked=false;
+
+function buildPiano(){
+  const song=SONGS[curSong];
+  document.getElementById('piano-song-name').textContent='🎵 '+song.name;
+  pIdx=0;
+  // sequence dots
+  const seqEl=document.getElementById('piano-seq');
+  seqEl.innerHTML=song.melody.map((k,i)=>
+    `<div class="seq-note" id="sn${i}" style="background:${KEYS[k].color}">${KEYS[k].note}</div>`
+  ).join('');
+  // keys
+  const keysEl=document.getElementById('piano-keys');
+  keysEl.innerHTML=KEYS.map((k,i)=>
+    `<button class="pkey" id="pkey${i}"
+      style="background:linear-gradient(180deg,${k.color}cc,${k.color}55)"
+      onmousedown="pressKey(${i})"
+      ontouchstart="event.preventDefault();pressKey(${i})"
+    >${k.note}</button>`
+  ).join('');
+  document.getElementById('piano-status').textContent='Press "Watch" to see the melody 🎵';
+  document.getElementById('piano-status').className='piano-status';
+  document.getElementById('piano-prize').classList.remove('show');
+  const wb=document.getElementById('piano-watch-btn');
+  if(wb)wb.disabled=false;
+  isWatching=false;pianoLocked=false;
+}
+
+function watchMelody(){
+  if(isWatching)return;
+  isWatching=true;pianoLocked=true;
+  const wb=document.getElementById('piano-watch-btn');
+  if(wb)wb.disabled=true;
+  document.getElementById('piano-status').textContent='Watch carefully... 👀 memorise it!';
+  const melody=SONGS[curSong].melody;
+  melody.forEach((_,i)=>{
+    const sn=document.getElementById('sn'+i);
+    if(sn)sn.classList.remove('active','done');
+  });
+  let i=0;
+  function playNext(){
+    if(i>=melody.length){
+      isWatching=false;pianoLocked=false;pIdx=0;
+      document.getElementById('piano-status').textContent='Now you try! Repeat the melody 🎹';
+      if(wb)wb.disabled=false;
+      return;
+    }
+    const ki=melody[i];
+    const sn=document.getElementById('sn'+i);
+    const pk=document.getElementById('pkey'+ki);
+    if(sn)sn.classList.add('active');
+    if(pk)pk.classList.add('lit');
+    playPianoNote(KEYS[ki].freq,0.38);
+    setTimeout(()=>{
+      if(sn){sn.classList.remove('active');sn.classList.add('done');}
+      if(pk)pk.classList.remove('lit');
+      i++;setTimeout(playNext,160);
+    },430);
+  }
+  setTimeout(playNext,400);
+}
+
+function pressKey(idx){
+  if(isWatching)return;
+  const pk=document.getElementById('pkey'+idx);
+  if(pk){pk.classList.add('pressed');setTimeout(()=>pk.classList.remove('pressed'),180);}
+  playPianoNote(KEYS[idx].freq,0.3);
+  if(pianoLocked)return;
+  const melody=SONGS[curSong].melody;
+  if(pIdx>=melody.length)return;
+  const expected=melody[pIdx];
+  const sn=document.getElementById('sn'+pIdx);
+  if(idx===expected){
+    if(sn){sn.classList.add('active');setTimeout(()=>{sn.classList.remove('active');sn.classList.add('done');},280);}
+    pIdx++;
+    if(pIdx===melody.length){
+      pianoLocked=true;
+      const prize=SONGS[curSong].prize;
+      document.getElementById('piano-status').textContent='🎉 Perfect! You nailed it!';
+      document.getElementById('piano-status').className='piano-status correct';
+      document.getElementById('pp-emoji').textContent=prize.emoji;
+      document.getElementById('pp-title').textContent=prize.title;
+      document.getElementById('pp-msg').textContent=prize.msg;
+      document.getElementById('piano-prize').classList.add('show');
+      boom(window.innerWidth/2,window.innerHeight*.65,130);
+    }
+  } else {
+    if(sn){sn.classList.add('wrong');setTimeout(()=>sn.classList.remove('wrong'),400);}
+    document.getElementById('piano-status').textContent='Oops! Start over 😅';
+    document.getElementById('piano-status').className='piano-status wrong';
+    pIdx=0;
+    melody.forEach((_,i)=>{
+      const s=document.getElementById('sn'+i);
+      if(s)s.classList.remove('done','active');
+    });
+    setTimeout(()=>{
+      if(!pianoLocked){
+        document.getElementById('piano-status').textContent='Repeat the melody 🎹';
+        document.getElementById('piano-status').className='piano-status';
+      }
+    },1200);
+  }
+}
+
+function resetPiano(){
+  const prev=curSong;
+  do{curSong=Math.floor(Math.random()*SONGS.length);}while(curSong===prev&&SONGS.length>1);
+  buildPiano();
+}
+
+window.addEventListener('DOMContentLoaded',()=>buildPiano());
 </script>
 </body>
 </html>
